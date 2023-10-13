@@ -1,0 +1,1906 @@
+﻿using BulkyBookWeb.Models.BulkyBook.Models.BulkyBookWeb.Controllers;>> 1.Install Packages: NuGet package Manager
+
+    microsoft.entityframeworkcore.7.0.10
+
+    microsoft.entityframeworkcore.SqlServer.7.0.10
+
+    microsoft.entityframeworkcore.Tool.7.0.10
+    Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation
+
+###############################################################################################################
+>> 2.Add DBContext in Data Folder
+    @@Add DbContext
+        public class ApplicationDbContext : DbContext
+{
+    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
+    {
+    }
+    public DbSet<Category> Categories { get; set; }
+}
+@@Add DbContext in the Program Build as Sql Server Services
+        builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(
+        builder.Configuration.GetConnectionString("DefaultConnection")
+        ));
+builder.Services.AddRazorPages().AddRazorRuntimeCompilation();
+###############################################################################################################
+>> 3.Package Manager Toll > Migration Code First Approch Project (Database Create automatic on basic of Modals)
+ add - migration AddCategoryToDatabase
+ update-database 
+###############################################################################################################
+>>007 Create Category Controller
+    Fl:D:\Working\DotNetMVC\Learning\BulkyBook\BulkyBookWeb\Views\Shared\_Layout.cshtml
+       <a class= "nav-link text-dark" asp - area = "" asp - controller = "Category" asp - action = "Index" > Category </ a >
+
+    Fl:CategoryController
+        private readonly ApplicationDbContext _db;
+public CategoryController(ApplicationDbContext db)
+{
+    _db = db;
+}
+
+public IActionResult Index()
+{
+    var objCategoryList = _db.Categories.ToList();
+    return View();
+}
+###############################################################################################################
+>> 009 Display all Categories
+        Fl:CategoryController
+        public IActionResult Index()
+{
+    //var objCategoryList = _db.Categories.ToList();  
+    IEnumerable<Category> objCategoryList = _db.Categories;// Strongly Type Connect With Modal
+    return View(objCategoryList);
+}
+Fl: index
+@model IEnumerable < Category >
+        @{
+    ViewData["Title"] = "Index";
+}
+        < h1 > Category List </ h1 >
+        < table class= "table table-striped table-bordered" style = "width:100px" >
+            < thead >
+                < tr >
+                    < th scope = "col" > Category Name </ th >
+                    < th scope = "col" > Display Order </ th >
+                </ tr >
+            </ thead >
+            < tbody >
+                @foreach(var obj in Model)
+                {
+                    < tr >
+                        < td width = "50%" > @obj.Name </ td >
+                        < td width = "30%" > @obj.DisplayOrder </ td >
+                    </ tr >
+                }
+            </ tbody >
+        </ table >
+
+###############################################################################################################################################
+>> 010 Bootswatch Theme
+https://bootswatch.com/ > Solar Theme
+1 Download file and css add in root>css>BootswatchTheme.css
+2._Layout > page add cdn of bootstrap 5 and custom BootswatchTheme.css file path.
+    i. @*<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />*@
+        <link href="~/css/bootwatchtheme.css" rel="stylesheet" />
+    ii.@*<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>*@
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
+3.Add Bootswatch nav in Project
+    <nav class= "navbar navbar-expand-lg bg-dark" data - bs - theme = "dark" >
+                < div class= "container-fluid" >
+                    < a class= "navbar-brand" href = "#" > Navbar </ a >
+                    < button class= "navbar-toggler" type = "button" data - bs - toggle = "collapse" data - bs - target = "#navbarColor02" aria - controls = "navbarColor02" aria - expanded = "false" aria - label = "Toggle navigation" >
+                        < span class= "navbar-toggler-icon" ></ span >
+                    </ button >
+                    < div class= "collapse navbar-collapse" id = "navbarColor02" >
+                        < ul class= "navbar-nav me-auto" >
+                            < li class= "nav-item" >
+
+                                < a class= "nav-link visually-hidden active" asp - area = "" asp - controller = "Home" asp - action = "Index" > Home </ a >
+                            </ li >
+                            < li class= "nav-item" >
+                                < a class= "nav-link" asp - area = "" asp - controller = "Category" asp - action = "Index" > Category </ a >
+                            </ li >
+                            
+                            @*< li class= "nav-item dropdown" >
+                                < a class= "nav-link dropdown-toggle" data - bs - toggle = "dropdown" href = "#" role = "button" aria - haspopup = "true" aria - expanded = "false" > Dropdown </ a >
+                                < div class= "dropdown-menu" >
+                                    < a class= "dropdown-item" href = "#" > Action </ a >
+                                    < a class= "dropdown-item" href = "#" > Another action </ a >
+                                    < a class= "dropdown-item" href = "#" > Something else here </ a >
+                                    < div class= "dropdown-divider" ></ div >
+                                    < a class= "dropdown-item" href = "#" > Separated link </ a >
+                                </ div >
+                            </ li > *@
+                        </ ul >
+                        < form class= "d-flex" >
+                            < input class= "form-control me-sm-2" type = "search" placeholder = "Search" >
+                            < button class= "btn btn-secondary my-2 my-sm-0" type = "submit" > Search </ button >
+                        </ form >
+                    </ div >
+            </ div >
+    </ nav >
+
+###############################################################################################################################################
+>> 011 Bootstrap Icons
+ 1.Add CDN in Shared>_Layout>
+ <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
+ 2.Go To boostrap 5 And Search and add icont tab in the table.
+ <i class= "bi bi-plus-circle" ></ i > &nbsp;
+3.UI Design of Category Create View 
+        @model IEnumerable<Category>
+        @{
+            ViewData["Title"] = "Index";
+        } 
+        < div class= "container p-3" >
+            < div class= "row pt-4" >
+                < div class= "col-6" >
+                    < h2 class= "text-primary" > Category List </ h2 >
+                </ div >
+                < div class= "col-6 text-end" >
+                    < a asp - controller = "Category" asp - action = "Create" class= "btn btn-primary" >
+                    < i class= "bi bi-plus-circle" ></ i > &nbsp; Create New Category
+                    </a>
+                </div>
+            </div>
+            <br /><br />
+            <table class= "table table-striped table-bordered" style = "width:100%" >
+            < thead >
+                < tr >
+                    < th scope = "col" > Category Name </ th >
+                    < th scope = "col" > Display Order </ th >
+                </ tr >
+            </ thead >
+            < tbody >
+                @foreach(var obj in Model)
+                {
+                    < tr >
+                        < td width = "50%" > @obj.Name </ td >
+                        < td width = "30%" > @obj.DisplayOrder </ td >
+                    </ tr >
+                }
+            </ tbody >
+            </ table >
+        </ div >
+
+
+###############################################################################################################################################
+>> 012 Create Category View
+1.Create Controller 
+
+     public ActionResult Create()
+{
+    return View();
+}
+2.Create View
+    @model Category
+		<form method="post">
+			<div class= "border p-3 mt-4" >
+
+                < div class= "row pb-2" >
+
+                    < h2 class= "text-primary" > Create Category </ h2 >
+
+                    < hr />
+
+                </ div >
+				@*< div asp - validation - summary = "All" ></ div > *@
+
+                < div class= "mb-3" >
+
+                    < label asp -for= "Name" ></ label >
+
+                    < input asp -for= "Name" class= "form-control" />
+
+                    < span asp - validation -for= "Name" class= "text-danger" ></ span >
+
+                </ div >
+
+                < div class= "mb-3" >
+
+                    < label asp -for= "DisplayOrder" ></ label >
+
+                    < input asp -for= "DisplayOrder" class= "form-control" />
+
+                    < span asp - validation -for= "DisplayOrder" class= "text-danger" ></ span >
+
+                </ div >
+
+                < button type = "submit" class= "btn btn-primary" style = "width:150px" > Create </ button >
+
+                < a asp - controller = "Category" asp - action = "Index" class= "btn btn-secondary" style = "width:150px" >
+                    Back to List
+                </a>
+			</div>
+		</form>
+    </div>
+
+
+###############################################################################################################################################
+>>013 Demo - Create Category
+1.[HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Create(Category obj)
+{
+    return RedirectToAction("Index");
+}
+###############################################################################################################################################
+    >> 014 Server side Validations
+    1. In controller Check Model Stat right or Not
+            [HttpPost]
+[ValidateAntiForgeryToken]
+public IActionResult Create(Category obj)
+{
+    if (ModelState.IsValid)
+    {
+        _db.Categories.Add(obj);
+        _db.SaveChanges();
+        return RedirectToAction("Index");
+    }
+    return View(obj);
+}
+2.In create.cshtml also ckeck Value is validate or not
+    <span asp-validation-for="Name" class= "text-danger" ></ span >
+###############################################################################################################################################
+>> 015 Custom Validation
+    1.@*<div asp-validation-summary="All"></div>*@ 
+     It be validate all file with show above level validate Summary on the List.
+
+    2. Custom Modal Error As Per Our Requirement....
+        [HttpPost]
+[ValidateAntiForgeryToken]
+public IActionResult Create(Category obj)
+{   
+            @*This Custom Modal Error Details  Start *@
+            if (obj.Name == obj.DisplayOrder.ToString())
+    {
+        ModelState.AddModelError("CustomErro", "The DisplayOrder cannot exactly match the Name.");
+        ModelState.AddModelError("name", "The DisplayOrder cannot exactly match the Name.");  
+                @*AddModelError First is the model name where we want to dispalay Error *@
+            }
+            @*This Custom Modal Error Details End *@ 
+
+            if (ModelState.IsValid)
+    {
+        _db.Categories.Add(obj);
+        _db.SaveChanges();
+        return RedirectToAction("Index");
+    }
+    return View(obj);
+}
+3.
+
+###############################################################################################################################################
+>> 016 Add Client Side Validation  @imp
+  1. Go to the shared>Views/Shared/_ValidationScriptsPartial.cshtml
+  >>This is jquery Validation of client side validation in the table.
+  <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+  <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+
+  >>If we called this validation in the table jquery validation autmatically called in the table.
+  >>Create.cshtml
+  @section Scripts{
+	@{
+		<partial name="_ValidationScriptsPartial" />
+	}
+}
+###############################################################################################################################################
+>> 017 Display Name and Range Validation
+>>This validation is apply in the only 
+    >>Model/Category
+    public class Category
+{
+    [Key]
+    public int Id { get; set; }
+    [Required]
+    public string Name { get; set; }
+    [DisplayName("Display Order")]
+    [Range(1, 100, ErrorMessage = "Display Order must be between 1 and 100 only!!")]
+    public int DisplayOrder { get; set; }
+    public DateTime CreatedDateTime { get; set; } = DateTime.Now;
+}
+###############################################################################################################################################
+>> 018 Edit Category - GET
+		>> File.index.cshtml
+		<a asp-controller="Category" asp-action="Edit" asp-route-id="@obj.Id"
+
+        class= "btn btn-primary mx-2" > < i class= "bi bi-pencil-square" ></ i > Edit </ a >
+
+
+        < a asp - controller = "Category" asp - action = "Delete" asp - route - id = "@obj.Id"
+
+        class= "btn btn-danger mx-2" > < i class= "bi bi-trash-fill" ></ i > Delete </ a >
+//GET 
+        >> File.Edit Controller
+        public IActionResult Edit(int? id)
+{
+    if (id == null || id == 0)
+    {
+        return NotFound();
+    }
+    var categoryFromDb = _db.Categories.Find(id);
+    //var categoryFromDbFirst = _unitOfWork.Category.GetFirstOrDefault(u => u.Id == id);
+    var categoryFromDbSingle = _db.Categories.SingleOrDefault(u => u.Id == id);
+
+    if (categoryFromDb == null)
+    {
+        return NotFound();
+    }
+    return View(categoryFromDb);
+}
+
+>> File:EditController
+		@{
+			ViewData["Title"] = "Create";
+		}
+
+		@model Category
+
+        <form method="post" asp-action="Edit">
+			<div class= "border p-3 mt-4" >
+
+                < div class= "row pb-2" >
+
+                    < h2 class= "text-primary" > Edit Category </ h2 >
+
+                    < hr />
+
+                </ div >
+				@*< div asp - validation - summary = "All" ></ div > *@
+
+                < div class= "mb-3" >
+
+                    < label asp -for= "Name" ></ label >
+
+                    < input asp -for= "Name" class= "form-control" />
+
+                    < span asp - validation -for= "Name" class= "text-danger" ></ span >
+
+                </ div >
+
+                < div class= "mb-3" >
+
+                    < label asp -for= "DisplayOrder" ></ label >
+
+                    < input asp -for= "DisplayOrder" class= "form-control" />
+
+                    < span asp - validation -for= "DisplayOrder" class= "text-danger" ></ span >
+
+                </ div >
+
+                < button type = "submit" class= "btn btn-primary" style = "width:150px" > Update </ button >
+
+                < a asp - controller = "Category" asp - action = "Index" class= "btn btn-secondary" style = "width:150px" >
+                    Back to List
+                </a>
+			</div>
+		</form>
+
+
+         @section Scripts{
+			@{
+				<partial name = "_ValidationScriptsPartial" />
+			}
+		} 
+###############################################################################################################################################
+>> 019 Edit Category - POST
+//POST
+        [HttpPost]
+[ValidateAntiForgeryToken]
+public IActionResult Edit(Category obj)
+{
+    if (obj.Name == obj.DisplayOrder.ToString())
+    {
+        ModelState.AddModelError("name", "The DisplayOrder cannot exactly match the Name.");
+    }
+    if (ModelState.IsValid)
+    {
+        _db.Categories.Update(obj);
+        _db.SaveChanges();
+        return RedirectToAction("Index");
+    }
+    return View(obj);
+}
+
+###############################################################################################################################################
+>> 020 Delete Category
+File:Delete.cshtml
+        @model Category
+		<form method="post" asp-action="DeletePost">
+			<input asp-for="Id" hidden />
+			<div class= "border p-3 mt-4" >
+
+                < div class= "row pb-2" >
+
+                    < h2 class= "text-primary" > Delete Category </ h2 >
+
+                    < hr />
+
+                </ div >
+				@*< div asp - validation - summary = "All" ></ div > *@
+
+                < div class= "mb-3" >
+
+                    < label asp -for= "Name" ></ label >
+
+                    < input asp -for= "Name" disabled class= "form-control" />
+
+                </ div >
+
+                < div class= "mb-3" >
+
+                    < label asp -for= "DisplayOrder" ></ label >
+
+                    < input asp -for= "DisplayOrder" disabled class= "form-control" />
+
+                </ div >
+
+                < button type = "submit" class= "btn btn-danger" style = "width:150px" > Delete </ button >
+
+                < a asp - controller = "Category" asp - action = "Index" class= "btn btn-secondary" style = "width:150px" >
+                    Back to List
+                </a>
+			</div>
+		</form>
+
+
+        @section Scripts{
+			@{
+				<partial name = "_ValidationScriptsPartial" />
+			}
+		}
+
+		File: Controller
+
+         public IActionResult Delete(int? id)
+{
+    if (id == null || id == 0)
+    {
+        return NotFound();
+    }
+    var category = _db.Categories.Find(id);
+    if (category == null)
+    {
+        return NotFound();
+    }
+    return View(category);
+}
+
+//POST
+[HttpPost]
+[ValidateAntiForgeryToken]
+public IActionResult DeletePost(int? id)
+{
+    var obj = _db.Categories.Find(id);
+    if (obj == null)
+    {
+        return NotFound();
+    }
+    _db.Categories.Remove(obj);
+    _db.SaveChanges();
+    return RedirectToAction("Index");
+}
+
+###############################################################################################################################################
+>> 021 Tempdata
+1.Pass the value in the  controller 
+				_db.SaveChanges();
+TempData["success"] = "Category Created Successfully....!";
+2.Add in index Page  Index|Edit|Delete
+@if (TempData["success"] != null)
+{
+
+    < h1 > @TempData["success"] </ h1 >
+}
+###############################################################################################################################################
+>> 022 Partial views
+	1.Add file in Shared>_notification.cshtml
+		FL:_notification.cshtml
+        @if(TempData["success"] != null)
+{
+
+            < h1 > @TempData["success"] </ h1 >
+
+        }
+
+@if(TempData["error"] != null)
+
+        {
+
+            < h1 > @TempData["error"] </ h1 >
+
+        }
+
+2.That Page Where you want to add partialView in the Page; Create | index | Edit | Delete
+  < partial name = "_Notification" >
+
+
+###############################################################################################################################################
+>> 023 Toastr Alerts
+ 1.Go TO : https://github.com/CodeSeven/toastr
+2.Add CDN in _Layout and _notification  
+     File:_Layout
+     <Head>
+        < link rel = "stylesheet" href = "//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
+
+     </ Head >
+     File:_notification
+        @if(TempData["success"] != null)
+{
+
+            < script src = "~/lib/jquery/dist/jquery.min.js" ></ script >
+
+            < script src = "//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js" ></ script >
+
+            < script type = "text/javascript" >
+                toastr.success('@TempData["success"]');
+
+            </ script >
+
+        }
+@if(TempData["error"] != null)
+
+        {
+
+            < script src = "~/lib/jquery/dist/jquery.min.js" ></ script >
+
+            < script src = "//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js" ></ script >
+
+             < script type = "text/javascript" >
+                toastr.error('@TempData["error"]');
+
+            </ script >
+
+        }
+
+###############################################################################################################################################
+###################### SECTION 04 - N-Tier Architecture  #################################
+>> 001 Creating more Projects
+1. Add Diffrent types of the class Library(Multiple Project)
+    A.Class Library: BulkyBook.DataAccess
+    B.Class Library: BulkyBook.Models
+    C.Class Library: BulkyBook.Utility
+2.Delete the diffrent types of the  class library.
+###############################################################################################################################################
+>> 002 N Tier Architecture
+ A.Move the the folder like 
+   DataAccess|Data, Migration >>
+   Models|Model >>
+   Utility|  >>
+B.Change the namespace in the modal
+  Like namespace BulkyBookWeb.Models || namespace BulkyBook.Models , Class Category, ErrorViewModel
+
+C.BulkyBook.DataAccess  >> ApplicationDbContext
+  1.Add NugetPackage Manager
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="7.0.1" />
+    <PackageReference Include = "Microsoft.EntityFrameworkCore" Version="7.0.1" />
+    <PackageReference Include = "Microsoft.EntityFrameworkCore.Tools" Version="7.0.1">
+    <PackageReference Include = "Microsoft.EntityFrameworkCore.Relational" Version="7.0.1" />
+    <PackageReference Include = "Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.1" />
+
+D.BulkyBook.DataAccess  >> ApplicationDbContextModelSnapshot
+  1.Add NugetPackage Manager :
+    using BulkyBook.DataAccess;
+    using Microsoft.EntityFrameworkCore;
+    using Microsoft.EntityFrameworkCore.Infrastructure;
+  2.cshtml page models ref change 
+    @* @model Category || To> @model BulkyBook.Models.Category  ||Create, index, updated, delete.cshtml, *@
+    ViewImport.cshtml
+    @using BulkyBookWeb
+    @using BulkyBook
+    @using BulkyBook.Models
+    @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+###############################################################################################################################################
+######################################>>Lession : 05 - Repository Pattern ##################################################
+>>001 IRepository Interface
+1.Bulkybook.DataAccess
+ A. Add Folder Repository
+ B. Add Folder Repository >IRepository
+ C.Add interface IRepository.cs** only Default Method add called EveryTime.
+   public interface IRepository<T> where T : class
+{
+    //T - Category
+    //T GetFirstOrDefault(Expression<Func<T, bool>> filter);
+    T GetFirstOrDefault(Expression<Func<T, bool>> filter, string? includeProperties = null, bool tracked = true);
+    IEnumerable<T> GetAll(Expression<Func<T, bool>>? filter = null, string? includeProperties = null);
+    void Add(T entity);
+    void Remove(T entity);
+    void RemoveRange(IEnumerable<T> entity);
+}
+###############################################################################################################################################
+002 Implement IRepository
+
+1.Add Repository.cs with interface IRepository
+   internal class Repository<T> : IRepository<T> where T : class
+{
+    private readonly ApplicationDbContext _db;
+    internal DbSet<T> dbSet;
+    public Repository(ApplicationDbContext db)
+    {
+        _db = db;
+        this.dbSet = _db.Set<T>();
+
+    }
+    public void Add(T entity)
+    {
+        // _db.Categories.Add(obj);
+        dbSet.Add(entity);
+    }
+
+    public IEnumerable<T> GetAll(Expression<Func<T, bool>>? filter = null, string? includeProperties = null)
+    {  //var objCategoryList = _db.Categories.ToList();  
+        IQueryable<T> query = dbSet;
+        return query.ToList();
+    }
+
+    public T GetFirstOrDefault(Expression<Func<T, bool>> filter, string? includeProperties = null, bool tracked = true)
+    {
+
+        //var categoryFromDb = _db.Categories.Find(id);
+        ////var categoryFromDbFirst = _unitOfWork.Category.GetFirstOrDefault(u => u.Id == id);
+        //var categoryFromDbSingle = _db.Categories.SingleOrDefault(u => u.Id == id);
+        IQueryable<T> query = dbSet;
+        query = query.Where(filter);
+        return query.FirstOrDefault();
+    }
+
+    public void Remove(T entity)
+    {
+        //_db.Categories.Remove(obj);
+        dbSet.Remove(entity);
+    }
+
+    public void RemoveRange(IEnumerable<T> entity)
+    {
+        dbSet.RemoveRange(entity);
+
+    }
+}
+###############################################################################################################################################
+>>003 Category Repository Interface
+1.ICategoryRepository is Implement with IRepository for complete flow of category.
+namespace BulkyBook.DataAccess.Repository.IRepository
+{
+    public interface ICategoryRepository : IRepository<Category>
+    {
+        void Update(Category obj);
+        void save();
+    }
+}
+
+###############################################################################################################################################
+>>004 Implement Category Repository
+1.We have create new class "CategoryRepository" For all operation Crud with combination of Repository and ICategoryRepository
+2.class CategoryRepository>> implimentation save|Update
+3.Class Repository<Category> >> implitation Add|GetAll|GetFirstOrDefault|Remove|RemoveRange
+4.interface ICategoryRepository >>  interface only save|Update
+
+namespace BulkyBook.DataAccess.Repository
+{
+    internal class CategoryRepository : Repository<Category>, ICategoryRepository
+    {
+        private ApplicationDbContext _db;
+        public CategoryRepository(ApplicationDbContext db) : base(db)
+        {
+            _db = db;
+        }
+
+        public void save()
+        {
+            _db.SaveChanges();
+        }
+
+        public void Update(Category obj)
+        {
+            _db.Categories.Update(obj);
+        }
+    }
+}
+ 
+###############################################################################################################################################
+>005 Replace DbContext with Category Repository
+1.Add Depedance injection to perform From WebProject To DataAccess Project.
+    A.# Transant means every time create new object of every request.
+      # When you click any button then if that request hit in database then transant create 3 time instant of database.
+      # So create transant automatic in Services container add "AddScope" service.
+      # Add Scope Services Depedance injection (interface and implimentation) like
+      # builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+2.Depedance injection inplement in controller
+
+                using BulkyBook.DataAccess;
+                using BulkyBook.DataAccess.Repository.IRepository;
+                using BulkyBook.Models;
+                using Microsoft.AspNetCore.Mvc;
+
+                namespace BulkyBookWeb.Controllers
+{
+    public class CategoryController : Controller
+    {
+        //Category
+        private readonly ICategoryRepository _db;
+        public CategoryController(ICategoryRepository db)
+        {
+            _db = db;
+        }
+
+        public IActionResult Index()
+        {
+            //var objCategoryList = _db.Categories.ToList();  
+            IEnumerable<Category> objCategoryList = _db.GetAll();// Strongly Type Connect With Modal
+            return View(objCategoryList);
+        }
+
+        public ActionResult Create()
+        {
+            return View();
+        }
+
+        //POST
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Create(Category obj)
+        {
+            if (ModelState.IsValid)
+            {
+                _db.Add(obj);
+                _db.Save();
+                TempData["success"] = "Category Created Successfully....!";
+                return RedirectToAction("Index");
+            }
+            return View(obj);
+        }
+
+        //GET
+        public IActionResult Edit(int? id)
+        {
+            if (id == null || id == 0)
+            {
+                return NotFound();
+            }
+            //var categoryFromDb = _db.Find(id);
+            //var categoryFromDbFirst = _unitOfWork.Category.GetFirstOrDefault(u => u.Id == id);
+            //var categoryFromDbSingle = _db.Categories.SingleOrDefault(u => u.Id == id);
+            var getFirstOrDefault = _db.GetFirstOrDefault(u => u.Id == id);
+
+            if (getFirstOrDefault == null)
+            {
+                return NotFound();
+            }
+            return View(getFirstOrDefault);
+        }
+
+
+        //POST
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Edit(Category obj)
+        {
+            if (obj.Name == obj.DisplayOrder.ToString())
+            {
+                ModelState.AddModelError("name", "The DisplayOrder cannot exactly match the Name.");
+            }
+            if (ModelState.IsValid)
+            {
+                _db.Update(obj);
+                _db.Save();
+                TempData["success"] = "Category Edited Successfully....!";
+                return RedirectToAction("Index");
+            }
+            return View(obj);
+        }
+
+
+        public IActionResult Delete(int? id)
+        {
+            if (id == null || id == 0)
+            {
+                return NotFound();
+            }
+            //var category = _db.Categories.Find(id);
+            var category = _db.GetFirstOrDefault(u => u.Id == id);
+            if (category == null)
+            {
+                return NotFound();
+            }
+            return View(category);
+        }
+
+
+        //POST
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult DeletePost(int? id)
+        {
+            //var obj = _db.Categories.Find(id);
+            var obj = _db.GetFirstOrDefault(u => u.Id == id);
+            if (obj == null)
+            {
+                return NotFound();
+            }
+            //_db.Categories.Remove(obj);
+            //_db.SaveChanges();
+
+            _db.Remove(obj);
+            _db.Save();
+            TempData["success"] = "Category Deleted Successfully....!";
+
+            return RedirectToAction("Index");
+        }
+
+
+    }
+
+
+}
+
+###############################################################################################################################################
+>>006 Implementing Unit of Work
+
+    #region History Operation1 Replace DbContext with Category Repository 
+#########################################################################################################################################
+##Program.cs
+#########################################################################################################################################
+
+    builder.Services.AddScoped<ICategoryRepository, CategoryRepository>(); 
+
+    #########################################################################################################################################
+    ##ModelRepository
+    #########################################################################################################################################
+
+
+    ##IRepository
+    namespace BulkyBook.DataAccess.Repository.IRepository
+{
+    public interface IRepository<T> where T : class
+    {
+        //T - Category
+        //T GetFirstOrDefault(Expression<Func<T, bool>> filter);
+        T GetFirstOrDefault(Expression<Func<T, bool>> filter, string? includeProperties = null, bool tracked = true);
+        IEnumerable<T> GetAll(Expression<Func<T, bool>>? filter = null, string? includeProperties = null);
+        void Add(T entity);
+        void Remove(T entity);
+        void RemoveRange(IEnumerable<T> entity);
+    }
+}
+
+##Repository
+namespace BulkyBook.DataAccess.Repository
+{
+    public class Repository<T> : IRepository<T> where T : class
+    {
+        private readonly ApplicationDbContext _db;
+        internal DbSet<T> dbSet;
+        public Repository(ApplicationDbContext db)
+        {
+            _db = db;
+            this.dbSet = _db.Set<T>();
+
+        }
+        public void Add(T entity)
+        {
+            // _db.Categories.Add(obj);
+            dbSet.Add(entity);
+        }
+
+        public IEnumerable<T> GetAll(Expression<Func<T, bool>>? filter = null, string? includeProperties = null)
+        {  //var objCategoryList = _db.Categories.ToList();  
+            IQueryable<T> query = dbSet;
+            return query.ToList();
+        }
+
+        public T GetFirstOrDefault(Expression<Func<T, bool>> filter, string? includeProperties = null, bool tracked = true)
+        {
+
+            //var categoryFromDb = _db.Categories.Find(id);
+            ////var categoryFromDbFirst = _unitOfWork.Category.GetFirstOrDefault(u => u.Id == id);
+            //var categoryFromDbSingle = _db.Categories.SingleOrDefault(u => u.Id == id);
+            IQueryable<T> query = dbSet;
+            query = query.Where(filter);
+            return query.FirstOrDefault();
+        }
+
+        public void Remove(T entity)
+        {
+            //_db.Categories.Remove(obj);
+            dbSet.Remove(entity);
+        }
+
+        public void RemoveRange(IEnumerable<T> entity)
+        {
+            dbSet.RemoveRange(entity);
+
+        }
+    }
+}
+
+##ICategoryRepository
+namespace BulkyBook.DataAccess.Repository.IRepository
+{
+    public interface ICategoryRepository : IRepository<Category>
+    {
+        void Update(Category obj);
+
+        void Save();
+    }
+
+}
+
+
+##CategoryRepository
+namespace BulkyBook.DataAccess.Repository
+{
+    public class CategoryRepository : Repository<Category>, ICategoryRepository
+    {
+        private ApplicationDbContext _db;
+        public CategoryRepository(ApplicationDbContext db) : base(db)
+        {
+            _db = db;
+        }
+
+        public void Save()
+        {
+            _db.SaveChanges();
+        }
+
+        public void Update(Category obj)
+        {
+            _db.Categories.Update(obj);
+        }
+    }
+}
+#########################################################################################################################################
+##Controller
+#########################################################################################################################################
+
+namespace BulkyBookWeb.Controllers
+{
+    public class CategoryController : Controller
+    {
+        //Category
+        private readonly ICategoryRepository _db;
+        public CategoryController(ICategoryRepository db)
+        {
+            _db = db;
+        }
+
+        public IActionResult Index()
+        {
+            //var objCategoryList = _db.Categories.ToList();  
+            IEnumerable<Category> objCategoryList = _db.GetAll();// Strongly Type Connect With Modal
+            return View(objCategoryList);
+        }
+
+        public ActionResult Create()
+        {
+            return View();
+        }
+
+        //POST
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Create(Category obj)
+        {
+            if (ModelState.IsValid)
+            {
+                _db.Add(obj);
+                _db.Save();
+                TempData["success"] = "Category Created Successfully....!";
+                return RedirectToAction("Index");
+            }
+            return View(obj);
+        }
+
+        //GET
+        public IActionResult Edit(int? id)
+        {
+            if (id == null || id == 0)
+            {
+                return NotFound();
+            }
+            //var categoryFromDb = _db.Find(id);
+            //var categoryFromDbFirst = _unitOfWork.Category.GetFirstOrDefault(u => u.Id == id);
+            //var categoryFromDbSingle = _db.Categories.SingleOrDefault(u => u.Id == id);
+            var getFirstOrDefault = _db.GetFirstOrDefault(u => u.Id == id);
+
+            if (getFirstOrDefault == null)
+            {
+                return NotFound();
+            }
+            return View(getFirstOrDefault);
+        }
+
+
+        //POST
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Edit(Category obj)
+        {
+            if (obj.Name == obj.DisplayOrder.ToString())
+            {
+                ModelState.AddModelError("name", "The DisplayOrder cannot exactly match the Name.");
+            }
+            if (ModelState.IsValid)
+            {
+                _db.Update(obj);
+                _db.Save();
+                TempData["success"] = "Category Edited Successfully....!";
+                return RedirectToAction("Index");
+            }
+            return View(obj);
+        }
+
+
+        public IActionResult Delete(int? id)
+        {
+            if (id == null || id == 0)
+            {
+                return NotFound();
+            }
+            //var category = _db.Categories.Find(id);
+            var category = _db.GetFirstOrDefault(u => u.Id == id);
+            if (category == null)
+            {
+                return NotFound();
+            }
+            return View(category);
+        }
+
+
+        //POST
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult DeletePost(int? id)
+        {
+            //var obj = _db.Categories.Find(id);
+            var obj = _db.GetFirstOrDefault(u => u.Id == id);
+            if (obj == null)
+            {
+                return NotFound();
+            }
+            //_db.Categories.Remove(obj);
+            //_db.SaveChanges();
+
+            _db.Remove(obj);
+            _db.Save();
+            TempData["success"] = "Category Deleted Successfully....!";
+
+            return RedirectToAction("Index");
+        }
+    }
+}
+
+#endregion
+
+
+#region Operation2 History Implementing Unit of Work (Collection of ICategory repository)
+
+#region  Old ICategoryRepository && CategoryRepository
+public interface ICategoryRepository : IRepository<Category>
+{
+    void Update(Category obj);
+    void Save();
+}
+public CategoryRepository(ApplicationDbContext db) : base(db)
+{
+    _db = db;
+}
+public void Save()
+{
+    _db.SaveChanges();
+}
+public void Update(Category obj)
+{
+    _db.Categories.Update(obj);
+}
+#endregion
+
+#region New Unit of Work RepositoryWorkFlow Create Save Method as GlobalWay
+public interface IUnitOfWork
+{
+    ICategoryRepository Category { get; }
+    void Save();
+}
+public class UnitOfWork : IUnitOfWork
+{
+    private ApplicationDbContext _db;
+
+    public UnitOfWork(ApplicationDbContext db)
+    {
+        _db = db;
+        Category = new CategoryRepository(_db);
+    }
+    public ICategoryRepository Category { get; private set; }
+    public void Save()
+    {
+        _db.SaveChanges();
+    }
+}
+        #endregion
+    #endregion
+
+
+    
+###############################################################################################################################################
+007 UnitOfWork in Action
+Add Service Dependance enjection
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+private readonly IUnitOfWork _unitOfWork;
+public CategoryController(IUnitOfWork unitOfWork)
+{
+    _unitOfWork = unitOfWork;
+}
+
+//IEnumerable<Category> objCategoryList = _db.GetAll();// Strongly Type Connect With Modal
+IEnumerable<Category> objCategoryList = _unitOfWork.Category.GetAll();// Strongly Type Connect With Modal        
+                                                                      //_db.Add(obj);
+                                                                      //_db.Save();
+_unitOfWork.Category.Add(obj);
+        _unitOfWork.Save();
+
+        //Edit()
+        //var getFirstOrDefault = _db.GetFirstOrDefault(u => u.Id == id);
+        var getFirstOrDefault = _unitOfWork.Category.GetFirstOrDefault(u => u.Id == id);
+
+//Edit(Category obj)
+//_db.Update(obj);
+//_db.Save();
+_unitOfWork.Category.Update(obj);
+        _unitOfWork.Save();
+
+        //Delete()
+        //var category  = _db.GetFirstOrDefault(u => u.Id == id);
+        var category = _unitOfWork.Category.GetFirstOrDefault(u => u.Id == id);
+
+DeletePost(int? id)
+        //var obj = _db.GetFirstOrDefault(u => u.Id == id);
+        var obj = _unitOfWork.Category.GetFirstOrDefault(u => u.Id == id);
+//_db.Remove(obj);
+//_db.Save();
+_unitOfWork.Category.Remove(obj);
+            _unitOfWork.Save();
+
+###############################################################################################################################################
+009 Assignment 1 Solution - Cover Type Repository
+/* 
+    Add New class as CoverType for crud operation as assigment
+    Flow:
+    1.Create covertype Modal/table
+    2.Push CoverType in database
+    3.implimentation cover type Repository and perform
+    4.Crud Operation as UnitOfWork
+*/
+
+@@ D:\Working\DotNetMVC\Learning\BulkyBook\BulkyBook.DataAccess\Data\ApplicationDbContext.cs
+// Add Db Set in ApplicationDbContext applicationDbContext
+
+            public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
+{
+}
+public DbSet<Category> Categories { get; set; }
+public DbSet<CoverType> CoverTypes { get; set; }
+
+
+@@ D//:\Working\DotNetMVC\Learning\BulkyBook\BulkyBook.Models\CoverType.cs
+                public class CoverType
+{
+    [Key]
+    public int id { get; set; }
+
+    [Required]
+    [DisplayName("Cover Type")]
+    [MaxLength(50)]
+    public string Name { get; set; }
+}   
+ @@ D:\Working\DotNetMVC\Learning\BulkyBook\BulkyBook.DataAccess\Repository\IRepository\ICoverTypeRepository.cs
+ public interface ICoverTypeRepository : IRepository<CoverType>
+{
+    void Update(CoverType obj);
+
+}
+
+ @@ D:\Working\DotNetMVC\Learning\BulkyBook\BulkyBook.DataAccess\Repository\CoverTypeRepository.cs
+ public class CoverTypeRepository : Repository<CoverType>, ICoverTypeRepository
+{
+    private ApplicationDbContext _db;
+    public CoverTypeRepository(ApplicationDbContext db) : base(db)
+    {
+        _db = db;
+    }
+    public void Update(CoverType obj)
+    {
+        _db.CoverTypes.Update(obj);
+    }
+}
+
+@@ D:\Working\DotNetMVC\Learning\BulkyBook\BulkyBook.DataAccess\Repository\IRepository\IUnitOfWork.cs
+public interface IUnitOfWork
+{
+    ICategoryRepository Category { get; }
+    ICoverTypeRepository CoverType { get; }
+}
+
+
+@@ D:\Working\DotNetMVC\Learning\BulkyBook\BulkyBook.DataAccess\Repository\UnitOfWork.cs
+public class Repository<T> : IRepository<T> where T : class
+{
+    private readonly ApplicationDbContext _db;
+    internal DbSet<T> dbSet;
+    public Repository(ApplicationDbContext db)
+    {
+        _db = db;
+        this.dbSet = _db.Set<T>();
+
+    }
+    public void Add(T entity)
+    {
+        // _db.Categories.Add(obj);
+        dbSet.Add(entity);
+    }
+
+    public IEnumerable<T> GetAll(Expression<Func<T, bool>>? filter = null, string? includeProperties = null)
+    {  //var objCategoryList = _db.Categories.ToList();  
+        IQueryable<T> query = dbSet;
+        return query.ToList();
+    }
+
+    public T GetFirstOrDefault(Expression<Func<T, bool>> filter, string? includeProperties = null, bool tracked = true)
+    {
+
+        //var categoryFromDb = _db.Categories.Find(id);
+        ////var categoryFromDbFirst = _unitOfWork.Category.GetFirstOrDefault(u => u.Id == id);
+        //var categoryFromDbSingle = _db.Categories.SingleOrDefault(u => u.Id == id);
+        IQueryable<T> query = dbSet;
+        query = query.Where(filter);
+        return query.FirstOrDefault();
+    }
+
+    public void Remove(T entity)
+    {
+        //_db.Categories.Remove(obj);
+        dbSet.Remove(entity);
+    }
+
+    public void RemoveRange(IEnumerable<T> entity)
+    {
+        dbSet.RemoveRange(entity);
+
+    }
+}
+
+Error = Your target project 'x' doesn't match your migrations assembly 'xx'. Either change your target project or change your migrations assembly
+// https://stackoverflow.com/questions/59265606/your-target-project-x-doesnt-match-your-migrations-assembly-xx-either-chan
+
+ add-migration AddCoverTypeToDatabase
+ update-database 
+
+ 
+
+###############################################################################################################################################
+>>010 Areas in .NET Core
+/*  >>Add Area in MVC ::
+        Right Click BulkyBookWeb> Add new Scaffolding> Area MVC
+        Area Name - Admin
+        Area Name - Customer
+        Add Program.cs Area in Routes
+ */
+    app.MapControllerRoute(
+    name: "default",
+    pattern: "{area=Customer}/{controller=Home}/{action=Index}/{id?}");
+
+   /* Admin|Customer area Delete Modal and Data */
+###############################################################################################################################################
+011 Areas in Action
+
+inside of Admin Folder : Remove Data|Model Folder
+    controller: add Categories Controller controller
+    View : add Categories Folder[index,Create,Update,Delete]|ViewImport|ViewStart
+
+ inside of Customer Folder : Remove Data|Model Folder
+    controller: add Home Controller controller
+    View : add Home Folder[index,Create,Update,Delete]|ViewImport|ViewStart
+
+###############################################################################################################################################
+>>012 Assignment 2 - Cover Type Controller and Views
+ Create Cover Type Controller & Action Method(Create/Edit/Delete/Index)
+ Create View for Create/Edit/Delete/Index
+ Add Client Side and Server Side Validation.
+###############################################################################################################################################
+>> 013 Assignment 2 Solution - Cover Type Controller and Views
+/*  if CoverType table not able to add in database then 
+ 1.Delete the Bulky Database 
+ 2. add-migration AddCoverTypeToDatabase
+ 3.update-database 
+
+ Copy the same as CategoryController as CoverTypeController| View>Catergory Copy as View>>CoverType
+
+ _Layout Page Add new Tap As CoverType 
+ */
+ <a class="nav-link" asp-area="Admin" asp-controller="CoverType" asp-action="Index">Cover Type</a> 
+    
+###############################################################################################################################################
+//  ######################################>>Lession :  06 - Product Management ##################################################
+###############################################################################################################################################
+>>001 Create Product Model
+namespace BulkyBook.Models
+{
+    public class Product
+    {
+        public int Id { get; set; }
+        [Required]
+        public string Title { get; set; }
+        public string Description { get; set; }
+        [Required]
+        public string ISBN { get; set; }
+        [Required]
+        public string Author { get; set; }
+        [Required]
+        [Range(1, 10000)]
+        [Display(Name = "List Price")]
+        public double ListPrice { get; set; }
+        [Required]
+        [Range(1, 10000)]
+        [Display(Name = "Price for 1-50")]
+        public double Price { get; set; }
+
+        [Required]
+        [Range(1, 10000)]
+        [Display(Name = "Price for 51-100")]
+        public double Price50 { get; set; }
+
+        [Required]
+        [Display(Name = "Price for 100+")]
+        [Range(1, 10000)]
+        public double Price100 { get; set; }
+        public string ImageUrl { get; set; }
+
+        [Required]
+        [Display(Name = "Category")]
+        public int CategoryId { get; set; }
+        [ForeignKey("CategoryId")]
+        public Category Category { get; set; }
+
+        [Required]
+        [Display(Name = "Cover Type")]
+        public int CoverTypeId { get; set; }    
+        public CoverType CoverType { get; set; }
+    }
+
+}
+
+###############################################################################################################################################
+>>002 Create Product Table
+namespace BulkyBook.DataAccess
+{
+    public class ApplicationDbContext:DbContext
+    {
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
+        {
+        }
+        public DbSet<Category> Categories { get; set; }
+        public DbSet<CoverType> CoverTypes { get; set; }
+        public DbSet<Product> Products { get; set; }
+    }
+}
+
+
+>>Chose Project >>BulkyBookDataExcess
+//If Product Table is not able to insert in database then we need to delete the BulkyBook Database.
+--add-migration addProductToDb
+--update-database
+
+###############################################################################################################################################
+>>003 Default Repository
+
+namespace BulkyBook.DataAccess.Repository
+{
+    public class Repository<T> : IRepository<T> where T : class
+    {
+        private readonly ApplicationDbContext _db;
+        internal DbSet<T> dbSet;
+        public Repository(ApplicationDbContext db)
+        {
+            _db = db;
+            this.dbSet = _db.Set<T>();
+
+        }
+        public void Add(T entity)
+        {
+            // _db.Categories.Add(obj);
+            dbSet.Add(entity);
+        }
+
+        public IEnumerable<T> GetAll(Expression<Func<T, bool>>? filter = null, string? includeProperties = null)
+        {  //var objCategoryList = _db.Categories.ToList();  
+            IQueryable<T> query = dbSet;
+            return query.ToList();
+        }
+
+        public T GetFirstOrDefault(Expression<Func<T, bool>> filter, string? includeProperties = null, bool tracked = true)
+        {
+
+            //var categoryFromDb = _db.Categories.Find(id);
+            ////var categoryFromDbFirst = _unitOfWork.Category.GetFirstOrDefault(u => u.Id == id);
+            //var categoryFromDbSingle = _db.Categories.SingleOrDefault(u => u.Id == id);
+            IQueryable<T> query = dbSet;
+            query = query.Where(filter);
+            return query.FirstOrDefault();  
+        }
+
+        public void Remove(T entity)
+        {
+            //_db.Categories.Remove(obj);
+            dbSet.Remove(entity);
+        }
+
+        public void RemoveRange(IEnumerable<T> entity)
+        {
+            dbSet.RemoveRange(entity);
+
+        }
+    }
+}
+    
+
+###############################################################################################################################################
+>>003 Product Repository 
+
+D:\Working\DotNetMVC\Learning\BulkyBook\BulkyBook.DataAccess\Repository\IRepository\IProductRepository.cs
+namespace BulkyBook.DataAccess.Repository.IRepository
+{
+    public interface IProductRepository : IRepository<Product>
+    {
+        void Update(Product obj);
+    }
+}
+
+
+D:\Working\DotNetMVC\Learning\BulkyBook\BulkyBook.DataAccess\Repository\ProductRepository.cs
+namespace BulkyBook.DataAccess.Repository
+{
+    public class ProductRepository : Repository<Product>, IProductRepository
+    {
+        private ApplicationDbContext _db;
+
+        public ProductRepository(ApplicationDbContext db) : base(db)
+        {
+            _db = db;
+        }
+
+
+        public void Update(Product obj)
+        {
+            var objFromDb = _db.Products.FirstOrDefault(u => u.Id == obj.Id);
+            if (objFromDb != null)
+            {
+                objFromDb.Title = obj.Title;
+                objFromDb.ISBN = obj.ISBN;
+                objFromDb.Price = obj.Price;
+                objFromDb.Price50 = obj.Price50;
+                objFromDb.ListPrice = obj.ListPrice;
+                objFromDb.Price100 = obj.Price100;
+                objFromDb.Description = obj.Description;
+                objFromDb.CategoryId = obj.CategoryId;
+                objFromDb.Author = obj.Author;
+                objFromDb.CoverTypeId = obj.CoverTypeId;
+                if (obj.ImageUrl != null)
+                {
+                    objFromDb.ImageUrl = obj.ImageUrl;
+                }
+            }
+        }
+    }
+}
+
+D:\Working\DotNetMVC\Learning\BulkyBook\BulkyBook.DataAccess\Repository\IRepository\IUnitOfWork.cs
+namespace BulkyBook.DataAccess.Repository.IRepository
+{
+   public interface IUnitOfWork
+    {
+        ICategoryRepository Category { get; }
+        ICoverTypeRepository CoverType { get; }
+        IProductRepository Product { get; }
+        void Save();
+   }   
+}
+
+D:\Working\DotNetMVC\Learning\BulkyBook\BulkyBook.DataAccess\Repository\UnitOfWork.cs
+
+namespace BulkyBook.DataAccess.Repository
+{
+    public class UnitOfWork : IUnitOfWork
+    {
+        private ApplicationDbContext _db;
+
+        public UnitOfWork(ApplicationDbContext db)
+        {
+            _db = db;
+            Category = new CategoryRepository(_db);
+            CoverType = new CoverTypeRepository(_db);
+            Product = new ProductRepository(_db);
+        }
+        public ICategoryRepository Category { get; private set; }
+        public ICoverTypeRepository CoverType { get; private set; }
+        public IProductRepository Product { get; private set; }
+        public void Save()
+        {
+            _db.SaveChanges();
+        }
+    }
+}
+
+
+###############################################################################################################################################
+004 Create Product Controller
+
+#Controller
+        private readonly IUnitOfWork _unitOfWork;
+        public ProductController(IUnitOfWork unitOfWork)
+        {
+            _unitOfWork = unitOfWork;
+        }
+
+        public IActionResult Index()
+        {
+             
+            return View();
+        }
+
+--#View
+<div class="container p-3">
+    <div class="row pt-4">
+        <div class="col-6">
+            <h2 class="text-primary">Product List</h2>
+		</div>
+        <div class="col-6 text-end">
+            <a asp-controller="Product" asp-action="Upsert" class="btn btn-primary">
+               <i class="bi bi-plus-circle"></i> &nbsp; Create New Product
+			</a>
+		</div>
+	</div>
+    <br /><br />
+
+<table  id="tblData"  class="table table-bordered table-striped" style="width:100%">
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>ISBN</th>
+            <th>Price</th>
+            <th>Author</th>
+            <th>Category</th>
+            <th></th>
+		</tr>
+	</thead>
+</table>
+</div>
+
+@section Scripts{
+    <script src="~/js/product.js"></script>
+}
+
+
+###############################################################################################################################################
+005 Product Get Action UI
+
+--#ProductController 
+  public IActionResult Upsert(int? id)
+        {
+            ProductVM productVM = new()
+            {
+                Product = new(),
+                CategoryList = _unitOfWork.Category.GetAll().Select(
+                    u => new SelectListItem
+                    {
+                        Text = u.Name,
+                        Value = u.Id.ToString()
+                    }
+                ),
+
+                CoverTypeList = _unitOfWork.CoverType.GetAll().Select(
+                    u => new SelectListItem
+                    {
+                        Text = u.Name,
+                        Value = u.Id.ToString()
+                    }
+                )
+
+            };
+
+            if (id == null || id == 0)
+            {
+                //Create Product
+                return View(productVM);
+            }
+            else
+            {
+                //Update Product
+            }
+            return View();
+        }
+
+
+
+
+--#View
+//Create Product UI 
+
+@model BulkyBook.Models.ViewModels.ProductVM
+<form method="post" asp-action="Upsert" enctype="multipart/form-data">
+	<div class="border p-3 mt-4 row">
+		<div class="row pb-2">
+			<h2 class="text-primary">@(Model.Product.Id!=0?"Update": "Create")  Product</h2>
+			@*<h2 class="text-primary">Edit Product</h2>*@
+			<hr />
+		</div>
+		@*<div asp-validation-summary="All"></div>*@
+
+
+		<div class="mb-3">
+			<label asp-for="Product.Title"></label>
+			<input asp-for="Product.Title" class="form-control" />
+			<span asp-validation-for="Product.Title" class="text-danger"></span>
+		</div>
+
+		<div class="mb-3">
+			<label asp-for="Product.Description"></label>
+			<textarea asp-for="Product.Description" rows="3" class="form-control"></textarea>
+			<span asp-validation-for="Product.Description" class="text-danger"></span>
+		</div>
+
+		<div class="mb-3 col-6">
+			<label asp-for="Product.ISBN"></label>
+			<input asp-for="Product.ISBN" class="form-control" />
+			<span asp-validation-for="Product.ISBN" class="text-danger"></span>
+		</div>
+
+		<div class="mb-3 col-6">
+			<label asp-for="Product.Author"></label>
+			<input asp-for="Product.Author" class="form-control" />
+			<span asp-validation-for="Product.Author" class="text-danger"></span>
+		</div>
+
+		<div class="mb-3 col-6">
+			<label asp-for="Product.ListPrice"></label>
+			<input asp-for="Product.ListPrice" class="form-control" />
+			<span asp-validation-for="Product.ListPrice" class="text-danger"></span>
+		</div>
+
+		<div class="mb-3 col-6">
+			<label asp-for="Product.Price"></label>
+			<input asp-for="Product.Price" class="form-control" />
+			<span asp-validation-for="Product.Price" class="text-danger"></span>
+		</div>
+
+		<div class="mb-3 col-6">
+			<label asp-for="Product.Price50"></label>
+			<input asp-for="Product.Price50" class="form-control" />
+			<span asp-validation-for="Product.Price50" class="text-danger"></span>
+		</div>
+
+		<div class="mb-3 col-6">
+			<label asp-for="Product.Price100"></label>
+			<input asp-for="Product.Price100" class="form-control" />
+			<span asp-validation-for="Product.Price100" class="text-danger"></span>
+		</div>
+		<div class="mb-3">
+			<label asp-for="Product.ImageUrl"></label>
+			<input type="file" id="uploadBox" name="file" class="form-control" />
+		</div>
+		<div class="mb-3  col-6">
+			<label asp-for="Product.CategoryId"></label>
+			<select asp-for="Product.CategoryId" asp-items="@Model.CategoryList" class="form-select">
+				<option disabled selected>--Select Category--</option>
+			</select>
+			<span asp-validation-for="Product.CategoryId" class="text-danger"></span>
+		</div>
+		<div class="mb-3  col-6">
+			<label asp-for="Product.CoverTypeId"></label>
+			<select asp-for="Product.CoverTypeId" asp-items="@Model.CoverTypeList" class="form-select">
+				<option disabled selected>--Select CoverType--</option>
+			</select>
+			<span asp-validation-for="Product.CoverTypeId" class="text-danger"></span>
+		</div>
+		<div class="col-12  ml-10">
+			@if (Model.Product.Id != 0)
+			{
+				<button type="submit" class="btn btn-primary" style="width:150px">Update</button>
+			}
+			else
+			{
+				<button type="submit" onclick="return ValidateInput()" class="btn btn-primary" style="width:150px">Create</button>
+			} 
+			<a asp-controller="CoverType" asp-action="Index" class="btn btn-secondary" style="width:150px">
+				Back to List
+			</a>
+		</div> 
+	</div>
+</form>
+
+@section Scripts{
+	@{
+		<partial name="_ValidationScriptsPartial"/>
+	}
+	<script>   
+	function ValidateInput(){
+		if(document.getElementById("uploadBox").value==""){
+			Swal.fire({
+			  icon: 'error',
+			  title: 'Oops...',
+			  text: 'Please upload an Image!',
+			});
+			return false;
+		}
+		return true;
+	}
+</script>
+}
+
+
+###############################################################################################################################################
+012 Create First Product
+
+[HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Upsert(ProductVM obj, IFormFile file)
+        {
+
+                if (ModelState.IsValid)
+                {
+                    string wwwRootPath = _hostEnvironment.WebRootPath;
+                    if (file != null)
+                    {
+                        string fileName = Guid.NewGuid().ToString();
+                        var uploads = Path.Combine(wwwRootPath, @"images\products");
+                        var extension = Path.GetExtension(file.FileName);
+
+                        if (obj.Product.ImageUrl != null)
+                        {
+                            var oldImagePath = Path.Combine(wwwRootPath, obj.Product.ImageUrl.TrimStart('\\'));
+                            if (System.IO.File.Exists(oldImagePath))
+                            {
+                                System.IO.File.Delete(oldImagePath);
+                            }
+                        }
+
+                        using (var fileStreams = new FileStream(Path.Combine(uploads, fileName + extension), FileMode.Create))
+                        {
+                            file.CopyTo(fileStreams);
+                        }
+                        obj.Product.ImageUrl = @"\images\products\" + fileName + extension;
+
+                    }
+                    if (obj.Product.Id == 0)
+                    {
+                        _unitOfWork.Product.Add(obj.Product);
+                    }
+                    else
+                    {
+                        _unitOfWork.Product.Update(obj.Product);
+                    }
+                    _unitOfWork.Save();
+                    TempData["success"] = "Product created successfully";
+                    return RedirectToAction("Index");
+                }
+                return View(obj);
+            
+        }
+          
+###############################################################################################################################################
+013 Add API EndPoint for DataTable 
+1) First Format :
+ --#ProductController 
+                [HttpGet]
+                public IActionResult GetAll()
+                {
+                    var productList = _unitOfWork.Product.GetAll();
+                    return Json(new { data = productList });
+                }
+
+  --#RepositoryController
+            public IEnumerable<T> GetAll(Expression<Func<T, bool>>? filter = null, string? includeProperties = null)
+            {  //var objCategoryList = _db.Categories.ToList();  
+                IQueryable<T> query = dbSet;
+                return query.ToList();
+            }
+
+
+    {"data":[{"id":1,"title":"Realme","description":"Mobile ","isbn":"ISBNreal","author":"Realme","listPrice":40,"price":23,"price50":56,"price100":400,"imageUrl":"\\images\\products\\9383dafe-afa0-4c23-8427-3451dec39927.jpg",
+    "categoryId":1,"category":null,
+    "coverTypeId":1,"coverType":null}]}
+
+  >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+  >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+2) Second Format: 
+        --#ProductController 
+        [HttpGet]
+                public IActionResult GetAll()
+                {
+                    var productList = _unitOfWork.Product.GetAll(includeProperties: "Category,CoverType");
+                    return Json(new { data = productList });
+                }
+
+        --#RepositoryController
+        public IEnumerable<T> GetAll(Expression<Func<T, bool>>? filter=null, string? includeProperties = null)
+                {
+                    IQueryable<T> query = dbSet;
+                    if (filter != null)
+                    {
+                        query = query.Where(filter);
+                    }
+                    if (includeProperties != null)
+                    {
+                        foreach(var includeProp in includeProperties.Split(new char[] { ','}, StringSplitOptions.RemoveEmptyEntries))
+                        {
+                            query = query.Include(includeProp);
+                        }
+                    }
+                    return query.ToList();
+                }
+
+
+        //Get Include Data:
+
+        {"data":[{"id":1,"title":"Realme","description":"Mobile ","isbn":"ISBNreal","author":"Realme","listPrice":40,"price":23,"price50":56,"price100":400,"imageUrl":"\\images\\products\\9383dafe-afa0-4c23-8427-3451dec39927.jpg",
+
+        "categoryId":1,"category":{"id":1,"name":"Mobile","displayOrder":10,"createdDateTime":"2023-10-08T21:28:05.1160188"},
+        "coverTypeId":1,"coverType":{"id":1,"name":"Cover"}}]}
+
+          
+###############################################################################################################################################
+014 Loading Datatables
+
+function loadDataTable() {
+    dataTable = $('#tblData').DataTable({
+        "ajax": {
+            "url": "/Admin/Product/GetAll"
+        },
+        "columns": [
+            { "data": "title", "width": "15%" },
+            { "data": "isbn", "width": "15%" },
+            { "data": "price", "width": "15%" },
+            { "data": "author", "width": "15%" },
+            { "data": "category.name", "width": "15%" },
+            {
+                "data": "id",
+                "render": function (data) {
+                    return `
+                        <div class="w-75 btn-group" role="group">
+                        <a href="/Admin/Product/Upsert?id=${data}"
+                        class="btn btn-primary mx-2"> <i class="bi bi-pencil-square"></i> Edit</a>
+                        <a onClick=Delete('/Admin/Product/Delete/${data}')
+                        class="btn btn-danger mx-2"> <i class="bi bi-trash-fill"></i> Delete</a>
+					</div>
+                        `
+                },
+                "width": "15%"
+            }
+        ]
+    });
+}
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
